@@ -3,170 +3,171 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
-import { CatalogProduct, CartItem, CustomerDetails as CustomerDetailsType, FormErrors } from './types';
-import { PRODUCTS } from './data/products';
+import { useState, useEffect } from 'react';
+import { CatalogProduct, CustomerDetails as CustomerDetailsType, FormErrors } from './types';
+import { PRODUCTS, BUSINESS_INFO } from './data/products';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { ProductCatalog } from './components/ProductCatalog';
-import { Cart } from './components/Cart';
-import { CustomerDetails } from './components/CustomerDetails';
-import { OrderSummary } from './components/OrderSummary';
-import { WhatsAppOrderButton } from './components/WhatsAppOrderButton';
 import { SimpleFooter } from './components/SimpleFooter';
-import { FloatingCartButton } from './components/FloatingCartButton';
+import { BookingModal } from './components/BookingModal';
 
 export default function App() {
-  // 1. Cart State
-  const [cart, setCart] = useState<CartItem[]>([]);
+  // Selected product and quantity to book
+  const [selectedProduct, setSelectedProduct] = useState<CatalogProduct | null>(null);
+  const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
-  // 2. Customer Details State
-  const [customer, setCustomer] = useState<CustomerDetailsType>({
-    fullName: '',
-    phoneNumber: '',
-    companyName: '',
-    location: '',
-    additionalNotes: ''
+  // Customer details state (remembered in localStorage)
+  const [customer, setCustomer] = useState<CustomerDetailsType>(() => {
+    try {
+      const saved = localStorage.getItem('jmd_customer_details');
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+    return {
+      fullName: '',
+      phoneNumber: '',
+      companyName: '',
+      location: '',
+      additionalNotes: ''
+    };
   });
 
-  // 3. Validation Errors State
+  // Sync customer details to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('jmd_customer_details', JSON.stringify(customer));
+    } catch {
+      // Ignore error
+    }
+  }, [customer]);
+
+  // Validation errors
   const [errors, setErrors] = useState<FormErrors>({});
 
-  // Add Product to Cart
-  const handleAddToCart = (product: CatalogProduct, quantity: number) => {
-    setCart((prevCart) => {
-      const existingIndex = prevCart.findIndex((item) => item.product.id === product.id);
-      if (existingIndex > -1) {
-        const updated = [...prevCart];
-        updated[existingIndex] = {
-          ...updated[existingIndex],
-          quantity: updated[existingIndex].quantity + quantity
-        };
-        return updated;
-      }
-      return [...prevCart, { product, quantity }];
-    });
-
-    // Clear cart error if was previously empty
-    if (errors.cart) {
-      setErrors((prev) => ({ ...prev, cart: undefined }));
-    }
+  // Direct Book Now handler from any product card
+  const handleBookNow = (product: CatalogProduct, quantity: number) => {
+    setSelectedProduct(product);
+    setSelectedQuantity(quantity);
+    setErrors({});
+    setIsBookingModalOpen(true);
   };
 
-  // Update Item Quantity in Cart
-  const handleUpdateQuantity = (productId: number | string, newQuantity: number) => {
-    if (newQuantity < 1) return;
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.product.id === productId ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
-
-  // Remove Item from Cart
-  const handleRemoveItem = (productId: number | string) => {
-    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
-  };
-
-  // Clear Cart
-  const handleClearCart = () => {
-    setCart([]);
-  };
-
-  // Handle Customer Form Field Change
+  // Handle form changes in the modal
   const handleCustomerChange = (field: keyof CustomerDetailsType, value: string) => {
     setCustomer((prev) => ({ ...prev, [field]: value }));
-
-    // Clear field-specific error as user types
     if (errors[field as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
   };
 
-  // Validation function
+  // Validate required details
   const validateOrder = (): boolean => {
     const newErrors: FormErrors = {};
 
-    if (cart.length === 0) {
-      newErrors.cart = 'Please add at least one product.';
+    if (!customer.location.trim()) {
+      newErrors.location = 'Please enter your delivery location or address.';
     }
 
     if (!customer.fullName.trim()) {
-      newErrors.fullName = 'Please enter your name.';
+      newErrors.fullName = 'Please enter your full name.';
     }
 
     if (!customer.phoneNumber.trim()) {
-      newErrors.phoneNumber = 'Please enter your phone number.';
+      newErrors.phoneNumber = 'Please enter your WhatsApp phone number.';
     } else if (customer.phoneNumber.trim().length < 8) {
-      newErrors.phoneNumber = 'Please enter a valid contact number.';
-    }
-
-    if (!customer.location.trim()) {
-      newErrors.location = 'Please enter your delivery location.';
+      newErrors.phoneNumber = 'Please enter a valid phone number.';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Scroll helpers
+  // Submit and redirect to WhatsApp
+  const handleModalSubmit = () => {
+    if (!selectedProduct) return;
+
+    const isValid = validateOrder();
+    if (!isValid) return;
+
+    // Format the WhatsApp message with exact product, quantity, location and details
+    const message = `Hello JMD Enterprises,
+
+I would like to place an order.
+
+Product Details:
+• Product: ${selectedProduct.name}
+• Category: ${selectedProduct.category}
+• Quantity Needed: ${selectedQuantity}
+
+Customer Details:
+• Delivery Location: ${customer.location.trim()}
+• Name: ${customer.fullName.trim()}
+• WhatsApp Phone: ${customer.phoneNumber.trim()}
+• Company: ${customer.companyName.trim() || 'N/A'}
+
+Customization / Branding Notes:
+${customer.additionalNotes.trim() || 'None'}
+
+Please share the pricing and delivery details.
+Thank you!`;
+
+    const encodedText = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${BUSINESS_INFO.cleanPhone}?text=${encodedText}`;
+
+    // Close the modal
+    setIsBookingModalOpen(false);
+
+    // Open WhatsApp in a new tab/window
+    const link = document.createElement('a');
+    link.href = whatsappUrl;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const scrollToCatalog = () => {
     document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const scrollToCart = () => {
-    document.getElementById('cart')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans antialiased flex flex-col justify-between selection:bg-emerald-500/20 selection:text-emerald-900">
       <div>
-        {/* 1. Header */}
-        <Header cartItemCount={totalCartCount} onCartClick={scrollToCart} />
+        {/* Header with brand and WhatsApp contact */}
+        <Header />
 
         <main>
-          {/* 2. Hero / Intro */}
+          {/* Hero Section */}
           <Hero onShopClick={scrollToCatalog} />
 
-          {/* 3. Product Catalog */}
-          <ProductCatalog products={PRODUCTS} onAddToCart={handleAddToCart} />
-
-          {/* 4. Cart */}
-          <Cart
-            items={cart}
-            onUpdateQuantity={handleUpdateQuantity}
-            onRemoveItem={handleRemoveItem}
-            onClearCart={handleClearCart}
-            onBrowseProducts={scrollToCatalog}
-          />
-
-          {/* 5. Customer Details */}
-          <CustomerDetails
-            details={customer}
-            errors={errors}
-            onChange={handleCustomerChange}
-          />
-
-          {/* 6. Order Summary */}
-          <OrderSummary items={cart} customer={customer} />
-
-          {/* 7. WhatsApp Order Button */}
-          <WhatsAppOrderButton
-            items={cart}
-            customer={customer}
-            onValidate={validateOrder}
-            errors={errors}
+          {/* Product Catalog with Quantity selection & "Book Now" */}
+          <ProductCatalog
+            products={PRODUCTS}
+            onBookNow={handleBookNow}
           />
         </main>
       </div>
 
-      {/* 8. Simple Footer */}
+      {/* Simple Clean Footer */}
       <SimpleFooter />
 
-      {/* Floating Cart Button (Mobile & Desktop) */}
-      <FloatingCartButton itemCount={totalCartCount} onClick={scrollToCart} />
+      {/* Direct Order Details & Location Modal before WhatsApp redirect */}
+      <BookingModal
+        isOpen={isBookingModalOpen}
+        onClose={() => setIsBookingModalOpen(false)}
+        product={selectedProduct}
+        quantity={selectedQuantity}
+        customer={customer}
+        errors={errors}
+        onChange={handleCustomerChange}
+        onSubmit={handleModalSubmit}
+      />
     </div>
   );
 }

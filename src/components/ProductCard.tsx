@@ -1,25 +1,22 @@
 import React, { useState } from 'react';
 import { CatalogProduct } from '../types';
 import { QuantitySelector } from './QuantitySelector';
-import { ShoppingCart, Check, Tag } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Tag, MessageCircle, ArrowRight } from 'lucide-react';
 
 interface ProductCardProps {
   product: CatalogProduct;
-  onAddToCart: (product: CatalogProduct, quantity: number) => void;
+  onBookNow: (product: CatalogProduct, quantity: number) => void;
 }
 
-export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+export const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  onBookNow
+}) => {
   const [quantity, setQuantity] = useState(1);
-  const [showAddedConfirmation, setShowAddedConfirmation] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const handleAddToCart = () => {
-    onAddToCart(product, quantity);
-    setShowAddedConfirmation(true);
-    setTimeout(() => {
-      setShowAddedConfirmation(false);
-    }, 1800);
+  const handleBookNow = () => {
+    onBookNow(product, quantity);
   };
 
   const fallbackImage =
@@ -47,26 +44,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }
             {product.category}
           </span>
         </div>
-
-        {/* Temporary Added to Cart Overlay Banner */}
-        <AnimatePresence>
-          {showAddedConfirmation && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="absolute inset-0 bg-emerald-950/85 backdrop-blur-xs flex items-center justify-center text-white font-medium z-10 px-4 text-center"
-            >
-              <div className="flex flex-col items-center gap-1.5">
-                <div className="w-9 h-9 rounded-full bg-emerald-500 flex items-center justify-center text-white shadow-md">
-                  <Check size={20} strokeWidth={3} />
-                </div>
-                <span className="text-sm font-bold text-white tracking-wide">Added to Cart!</span>
-                <span className="text-xs text-emerald-200">({quantity} {quantity === 1 ? 'unit' : 'units'})</span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* Product Info */}
@@ -91,24 +68,30 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }
             </span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+          {/* Quantity Selector */}
+          <div className="flex items-center justify-between gap-2 mb-3.5 bg-slate-50/80 p-2 rounded-xl border border-slate-200/60">
+            <span className="text-xs font-semibold text-slate-600 pl-1">
+              Select Quantity:
+            </span>
             <QuantitySelector
               quantity={quantity}
               onQuantityChange={setQuantity}
-              size="md"
-              className="w-full sm:w-auto justify-center"
+              size="sm"
             />
-
-            <button
-              type="button"
-              id={`add-to-cart-btn-${product.id}`}
-              onClick={handleAddToCart}
-              className="flex-1 flex items-center justify-center gap-2 h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-sm font-semibold shadow-sm hover:shadow active:scale-[0.98] transition-all cursor-pointer"
-            >
-              <ShoppingCart size={16} />
-              <span>Add to Cart</span>
-            </button>
           </div>
+
+          {/* Only Option: Book Now */}
+          <button
+            type="button"
+            id={`book-now-btn-${product.id}`}
+            onClick={handleBookNow}
+            className="w-full flex items-center justify-center gap-2 h-11 px-4 rounded-xl bg-[#25D366] hover:bg-[#20ba59] active:bg-[#1caa52] text-white text-sm font-bold shadow-sm hover:shadow active:scale-[0.98] transition-all cursor-pointer group"
+            title="Book now on WhatsApp"
+          >
+            <MessageCircle size={18} className="fill-white/20 group-hover:scale-110 transition-transform" />
+            <span>Book Now</span>
+            <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform opacity-90" />
+          </button>
         </div>
       </div>
     </div>

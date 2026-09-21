@@ -6,10 +6,13 @@ import { Search, X, SlidersHorizontal, PackageOpen } from 'lucide-react';
 
 interface ProductCatalogProps {
   products: CatalogProduct[];
-  onAddToCart: (product: CatalogProduct, quantity: number) => void;
+  onBookNow: (product: CatalogProduct, quantity: number) => void;
 }
 
-export const ProductCatalog: React.FC<ProductCatalogProps> = ({ products, onAddToCart }) => {
+export const ProductCatalog: React.FC<ProductCatalogProps> = ({
+  products,
+  onBookNow
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
@@ -37,7 +40,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ products, onAddT
           Our Products
         </h2>
         <p className="mt-2 text-slate-600 text-base sm:text-lg">
-          Choose the products you need and add them to your order.
+          Select your desired quantity and tap Book Now to order directly on WhatsApp.
         </p>
       </div>
 
@@ -101,7 +104,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({ products, onAddT
             <ProductCard
               key={product.id}
               product={product}
-              onAddToCart={onAddToCart}
+              onBookNow={onBookNow}
             />
           ))}
         </div>

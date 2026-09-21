@@ -1,15 +1,20 @@
 import React from 'react';
 import { BUSINESS_INFO } from '../data/products';
 import { MapPin, MessageCircle, Instagram } from 'lucide-react';
+import { JMDLogo } from './JMDLogo';
 
 export const SimpleFooter: React.FC = () => {
   return (
     <footer id="footer" className="mt-16 border-t border-slate-200 bg-white/90 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto text-center space-y-4">
-        <div>
+        <div className="flex flex-col items-center">
+          <JMDLogo className="w-16 h-16 mb-3 shadow-sm ring-2 ring-slate-900/10" />
           <h3 className="font-heading font-black text-xl sm:text-2xl text-slate-900 tracking-tight">
             {BUSINESS_INFO.name.toUpperCase()}
           </h3>
+          <p className="text-emerald-700 text-xs font-bold tracking-widest uppercase mt-0.5">
+            Print Your Imagination • Since 2019
+          </p>
           <p className="text-slate-600 text-sm font-medium mt-1">
             {BUSINESS_INFO.fullTagline}
           </p>
