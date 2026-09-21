@@ -3,101 +3,170 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Navbar } from './components/Navbar';
+import { useState } from 'react';
+import { CatalogProduct, CartItem, CustomerDetails as CustomerDetailsType, FormErrors } from './types';
+import { PRODUCTS } from './data/products';
+import { Header } from './components/Header';
 import { Hero } from './components/Hero';
-import { TrustStrip } from './components/TrustStrip';
-import { Solutions } from './components/Solutions';
-import { ProductShowcase } from './components/ProductShowcase';
-import { FeaturedShowcase } from './components/FeaturedShowcase';
-import { Process } from './components/Process';
-import { WhyUs } from './components/WhyUs';
-import { UseCases } from './components/UseCases';
-import { InstagramGrid } from './components/InstagramGrid';
-import { FAQ } from './components/FAQ';
-import { QuoteForm } from './components/QuoteForm';
-import { Contact } from './components/Contact';
-import { Footer } from './components/Footer';
-import { WhatsAppButton } from './components/WhatsAppButton';
-import { motion } from 'motion/react';
-import { Button } from './components/ui/Button';
+import { ProductCatalog } from './components/ProductCatalog';
+import { Cart } from './components/Cart';
+import { CustomerDetails } from './components/CustomerDetails';
+import { OrderSummary } from './components/OrderSummary';
+import { WhatsAppOrderButton } from './components/WhatsAppOrderButton';
+import { SimpleFooter } from './components/SimpleFooter';
+import { FloatingCartButton } from './components/FloatingCartButton';
 
 export default function App() {
+  // 1. Cart State
+  const [cart, setCart] = useState<CartItem[]>([]);
+
+  // 2. Customer Details State
+  const [customer, setCustomer] = useState<CustomerDetailsType>({
+    fullName: '',
+    phoneNumber: '',
+    companyName: '',
+    location: '',
+    additionalNotes: ''
+  });
+
+  // 3. Validation Errors State
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  // Add Product to Cart
+  const handleAddToCart = (product: CatalogProduct, quantity: number) => {
+    setCart((prevCart) => {
+      const existingIndex = prevCart.findIndex((item) => item.product.id === product.id);
+      if (existingIndex > -1) {
+        const updated = [...prevCart];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: updated[existingIndex].quantity + quantity
+        };
+        return updated;
+      }
+      return [...prevCart, { product, quantity }];
+    });
+
+    // Clear cart error if was previously empty
+    if (errors.cart) {
+      setErrors((prev) => ({ ...prev, cart: undefined }));
+    }
+  };
+
+  // Update Item Quantity in Cart
+  const handleUpdateQuantity = (productId: number | string, newQuantity: number) => {
+    if (newQuantity < 1) return;
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item.product.id === productId ? { ...item, quantity: newQuantity } : item
+      )
+    );
+  };
+
+  // Remove Item from Cart
+  const handleRemoveItem = (productId: number | string) => {
+    setCart((prevCart) => prevCart.filter((item) => item.product.id !== productId));
+  };
+
+  // Clear Cart
+  const handleClearCart = () => {
+    setCart([]);
+  };
+
+  // Handle Customer Form Field Change
+  const handleCustomerChange = (field: keyof CustomerDetailsType, value: string) => {
+    setCustomer((prev) => ({ ...prev, [field]: value }));
+
+    // Clear field-specific error as user types
+    if (errors[field as keyof FormErrors]) {
+      setErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  // Validation function
+  const validateOrder = (): boolean => {
+    const newErrors: FormErrors = {};
+
+    if (cart.length === 0) {
+      newErrors.cart = 'Please add at least one product.';
+    }
+
+    if (!customer.fullName.trim()) {
+      newErrors.fullName = 'Please enter your name.';
+    }
+
+    if (!customer.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Please enter your phone number.';
+    } else if (customer.phoneNumber.trim().length < 8) {
+      newErrors.phoneNumber = 'Please enter a valid contact number.';
+    }
+
+    if (!customer.location.trim()) {
+      newErrors.location = 'Please enter your delivery location.';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Scroll helpers
+  const scrollToCatalog = () => {
+    document.getElementById('catalog')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const scrollToCart = () => {
+    document.getElementById('cart')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   return (
-    <div className="min-h-screen bg-[#0b0d10] text-[#f3f4f6]">
-      {/* Background elements */}
-      <div className="fixed inset-0 pointer-events-none -z-50 overflow-hidden">
-        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#dfb775]/5 blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#dfb775]/5 blur-[120px] rounded-full -translate-x-1/3 translate-y-1/3"></div>
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans antialiased flex flex-col justify-between selection:bg-emerald-500/20 selection:text-emerald-900">
+      <div>
+        {/* 1. Header */}
+        <Header cartItemCount={totalCartCount} onCartClick={scrollToCart} />
+
+        <main>
+          {/* 2. Hero / Intro */}
+          <Hero onShopClick={scrollToCatalog} />
+
+          {/* 3. Product Catalog */}
+          <ProductCatalog products={PRODUCTS} onAddToCart={handleAddToCart} />
+
+          {/* 4. Cart */}
+          <Cart
+            items={cart}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemoveItem={handleRemoveItem}
+            onClearCart={handleClearCart}
+            onBrowseProducts={scrollToCatalog}
+          />
+
+          {/* 5. Customer Details */}
+          <CustomerDetails
+            details={customer}
+            errors={errors}
+            onChange={handleCustomerChange}
+          />
+
+          {/* 6. Order Summary */}
+          <OrderSummary items={cart} customer={customer} />
+
+          {/* 7. WhatsApp Order Button */}
+          <WhatsAppOrderButton
+            items={cart}
+            customer={customer}
+            onValidate={validateOrder}
+            errors={errors}
+          />
+        </main>
       </div>
 
-      <Navbar />
-      
-      <main>
-        <Hero />
-        <TrustStrip />
-        <Solutions />
-        <ProductShowcase />
-        <FeaturedShowcase />
-        <Process />
-        <WhyUs />
-        <UseCases />
-        
-        {/* Made for Businesses Trust Section */}
-        <section id="about" className="py-24 border-y border-white/5">
-          <div className="container mx-auto px-6 text-center">
-            <h2 className="text-4xl md:text-6xl font-black text-white mb-12">Made for Businesses That Want to Be Remembered.</h2>
-            <div className="flex flex-wrap justify-center gap-12 text-gray-500 font-bold uppercase tracking-[0.3em] text-sm">
-              <span className="hover:text-[#dfb775] transition-colors">Premium Gifting</span>
-              <span className="hidden sm:inline opacity-30">•</span>
-              <span className="hover:text-[#dfb775] transition-colors">Custom Apparel</span>
-              <span className="hidden sm:inline opacity-30">•</span>
-              <span className="hover:text-[#dfb775] transition-colors">Bulk Orders</span>
-              <span className="hidden sm:inline opacity-30">•</span>
-              <span className="hover:text-[#dfb775] transition-colors">Pan-India Delivery</span>
-            </div>
-          </div>
-        </section>
+      {/* 8. Simple Footer */}
+      <SimpleFooter />
 
-        <InstagramGrid />
-        <FAQ />
-        
-        <QuoteForm />
-        
-        {/* Final CTA Section */}
-        <section className="py-24 relative px-6">
-          <div className="container mx-auto max-w-6xl">
-             <motion.div 
-               initial={{ opacity: 0, y: 30 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               viewport={{ once: true }}
-               className="glass-panel rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden group"
-             >
-                {/* Animated Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#dfb775]/10 via-transparent to-[#dfb775]/5 opacity-50 group-hover:opacity-80 transition-opacity"></div>
-                
-                <div className="relative z-10">
-                  <h2 className="text-4xl md:text-7xl font-black text-white mb-8 leading-tight">Your Next Corporate <br /><span className="text-gold-gradient">Gift Starts Here.</span></h2>
-                  <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-12">
-                    Tell us what you have in mind. We'll help you turn it into something worth remembering.
-                  </p>
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-                    <Button size="xl" onClick={() => window.location.href = '#quote'}>
-                      Get a Quote
-                    </Button>
-                    <Button variant="whatsapp" size="xl" onClick={() => window.open('https://wa.me/919713876808', '_blank')}>
-                      WhatsApp Us
-                    </Button>
-                  </div>
-                </div>
-             </motion.div>
-          </div>
-        </section>
-
-        <Contact />
-      </main>
-
-      <Footer />
-      <WhatsAppButton />
+      {/* Floating Cart Button (Mobile & Desktop) */}
+      <FloatingCartButton itemCount={totalCartCount} onClick={scrollToCart} />
     </div>
   );
 }
