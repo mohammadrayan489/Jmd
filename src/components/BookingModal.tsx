@@ -249,6 +249,33 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   </div>
                 </div>
 
+                {/* Custom Name / Brand to Print or Engrave */}
+                <div>
+                  <label
+                    htmlFor="modal-input-custom-name"
+                    className="flex items-center justify-between text-xs font-bold text-slate-800 mb-1"
+                  >
+                    <span className="flex items-center gap-1.5 text-emerald-800">
+                      <Sparkles size={13} className="text-emerald-600" />
+                      Name or Text to Print / Engrave
+                    </span>
+                    <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">Custom Branding</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="modal-input-custom-name"
+                      value={customer.customNameToPrint}
+                      onChange={(e) => onChange('customNameToPrint', e.target.value)}
+                      placeholder="e.g. Rahul Sharma, Dr. Aman Gupta, or Company Name"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-emerald-50/40 border border-emerald-300 text-slate-900 text-sm placeholder-slate-400 transition-all focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 font-medium"
+                    />
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    Write the exact name, designation, or brand title to engrave/print on this item.
+                  </p>
+                </div>
+
                 {/* Company Name (Optional) */}
                 <div>
                   <label

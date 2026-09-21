@@ -34,13 +34,13 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
       <div className="text-center max-w-2xl mx-auto mb-10">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-3">
           <SlidersHorizontal size={12} />
-          <span>Curated Catalog</span>
+          <span>Custom Engraved & Printed Merchandise</span>
         </div>
         <h2 className="font-heading font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight">
-          Our Products
+          Print Your Imagination
         </h2>
         <p className="mt-2 text-slate-600 text-base sm:text-lg">
-          Select your desired quantity and tap Book Now to order directly on WhatsApp.
+          Personalized bottles, pens, t-shirts, caps, diaries, books, keychains, badges & mugs with custom names.
         </p>
       </div>
 
@@ -56,7 +56,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
             id="product-search-input"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search products, hampers, bottles..."
+            placeholder="Search bottles, pens, t-shirts, caps, diaries, keychains..."
             className="w-full pl-10 pr-10 py-3 rounded-2xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all"
           />
           {searchQuery && (

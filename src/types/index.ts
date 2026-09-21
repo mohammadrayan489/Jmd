@@ -19,6 +19,7 @@ export interface CustomerDetails {
   phoneNumber: string;
   companyName: string;
   location: string;
+  customNameToPrint: string;
   additionalNotes: string;
 }
 

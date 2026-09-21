@@ -19,16 +19,16 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick }) => {
 
       <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80 mb-5 shadow-2xs">
         <Sparkles size={14} className="text-emerald-600" />
-        <span>Direct WhatsApp Gifting Catalog</span>
+        <span>Custom Name & Brand Merchandise Printing</span>
       </div>
 
       <h1 className="font-heading font-black text-3xl sm:text-5xl md:text-6xl text-slate-950 tracking-tight leading-[1.15]">
-        Corporate Gifting <br className="hidden sm:inline" />
-        <span className="text-emerald-700">Made Simple</span>
+        Print Your Name & Imagination <br className="hidden sm:inline" />
+        <span className="text-emerald-700">On Every Product</span>
       </h1>
 
-      <p className="mt-4 sm:mt-5 text-base sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-        Browse our products, choose your quantity and send your order directly to JMD Enterprises on WhatsApp.
+      <p className="mt-4 sm:mt-5 text-base sm:text-lg text-slate-600 max-w-2xl mx-auto leading-relaxed">
+        Specializing in custom name-engraved <strong>bottles, pens, t-shirts, caps, diaries, books, keychains, badges & mugs</strong> for professionals, corporate teams, and personal branding.
       </p>
 
       {/* 3-Step Instant Ordering Guide */}
@@ -48,8 +48,8 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick }) => {
             2
           </span>
           <div>
-            <p className="text-xs font-bold text-slate-800">Enter Location</p>
-            <p className="text-[11px] text-slate-500">Tap Book Now</p>
+            <p className="text-xs font-bold text-slate-800">Add Custom Name</p>
+            <p className="text-[11px] text-slate-500">Provide name to print</p>
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick }) => {
           </span>
           <div>
             <p className="text-xs font-bold text-slate-800">WhatsApp Order</p>
-            <p className="text-[11px] text-slate-500">Pre-filled message</p>
+            <p className="text-[11px] text-slate-500">Instant dispatch chat</p>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick }) => {
           onClick={onShopClick}
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold text-base shadow-sm hover:shadow-md active:scale-95 transition-all cursor-pointer"
         >
-          <span>Shop Products</span>
+          <span>Explore Custom Products</span>
           <ArrowDown size={18} />
         </button>
       </div>
@@ -81,12 +81,12 @@ export const Hero: React.FC<HeroProps> = ({ onShopClick }) => {
       <div className="mt-8 pt-6 border-t border-slate-200/80 flex flex-wrap items-center justify-center gap-2 sm:gap-6 text-xs sm:text-sm font-semibold text-slate-500">
         <span className="inline-flex items-center gap-1.5 text-slate-700">
           <CheckCircle2 size={14} className="text-emerald-600" />
-          Bulk Orders
+          Individual & Bulk Orders
         </span>
         <span className="text-slate-300">•</span>
         <span className="inline-flex items-center gap-1.5 text-slate-700">
           <Sparkles size={14} className="text-emerald-600" />
-          Custom Branding
+          Custom Name Laser & Print
         </span>
         <span className="text-slate-300">•</span>
         <span className="inline-flex items-center gap-1.5 text-slate-700">

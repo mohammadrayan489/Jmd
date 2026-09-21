@@ -33,6 +33,7 @@ export default function App() {
       phoneNumber: '',
       companyName: '',
       location: '',
+      customNameToPrint: '',
       additionalNotes: ''
     };
   });
@@ -104,13 +105,16 @@ Product Details:
 • Category: ${selectedProduct.category}
 • Quantity Needed: ${selectedQuantity}
 
-Customer Details:
-• Delivery Location: ${customer.location.trim()}
-• Name: ${customer.fullName.trim()}
-• WhatsApp Phone: ${customer.phoneNumber.trim()}
-• Company: ${customer.companyName.trim() || 'N/A'}
+Customization / Branding:
+• Name/Text to Print/Engrave: ${customer.customNameToPrint.trim() || 'To be provided / N/A'}
+• Company / Brand Name: ${customer.companyName.trim() || 'N/A'}
 
-Customization / Branding Notes:
+Customer & Delivery Details:
+• Delivery Location: ${customer.location.trim()}
+• Customer Name: ${customer.fullName.trim()}
+• WhatsApp Phone: ${customer.phoneNumber.trim()}
+
+Additional Notes:
 ${customer.additionalNotes.trim() || 'None'}
 
 Please share the pricing and delivery details.
