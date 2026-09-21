@@ -27,16 +27,6 @@ export const CATEGORIES = [
 
 export const PRODUCTS: CatalogProduct[] = [
   {
-    id: 1,
-    name: "Executive Signature Gift Box",
-    description: "Curated matte black luxury hamper box with custom foil stamping and premium items.",
-    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=800&auto=format&fit=crop",
-    category: "Corporate Gifts",
-    price: null,
-    priceType: "on_request",
-    available: true
-  },
-  {
     id: 2,
     name: "Custom Combed Cotton Polo T-Shirt",
     description: "Heavyweight 240 GSM breathable pique cotton with custom embroidery or screen branding.",
@@ -52,36 +42,6 @@ export const PRODUCTS: CatalogProduct[] = [
     description: "Double-wall food-grade stainless steel bottle with laser engraving and temperature retention.",
     image: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?q=80&w=800&auto=format&fit=crop",
     category: "Drinkware",
-    price: null,
-    priceType: "on_request",
-    available: true
-  },
-  {
-    id: 4,
-    name: "Artisan Leather Executive Notebook",
-    description: "Hardbound vegan leather journal with 100 GSM ivory paper, ribbon marker and debossed logo.",
-    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800&auto=format&fit=crop",
-    category: "Stationery",
-    price: null,
-    priceType: "on_request",
-    available: true
-  },
-  {
-    id: 5,
-    name: "VIP Welcome Hamper Box",
-    description: "All-in-one employee onboarding kit with branded merchandise, greeting card & luxury finish.",
-    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?q=80&w=800&auto=format&fit=crop",
-    category: "Corporate Gifts",
-    price: null,
-    priceType: "on_request",
-    available: true
-  },
-  {
-    id: 6,
-    name: "Premium Corporate Fleece Hoodie",
-    description: "Ultra-soft brushed fleece pullover or zip hoodie with high-density team logo branding.",
-    image: "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?q=80&w=800&auto=format&fit=crop",
-    category: "Apparel",
     price: null,
     priceType: "on_request",
     available: true
