@@ -164,7 +164,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     <input
                       type="text"
                       id="modal-input-location"
-                      value={customer.location}
+                      value={customer.location ?? ''}
                       onChange={(e) => onChange('location', e.target.value)}
                       placeholder="City, State or full office address (e.g. Gwalior, MP)"
                       className={`w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50/80 border text-slate-900 text-sm placeholder-slate-400 transition-all focus:outline-none focus:bg-white ${
@@ -198,7 +198,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       <input
                         type="text"
                         id="modal-input-name"
-                        value={customer.fullName}
+                        value={customer.fullName ?? ''}
                         onChange={(e) => onChange('fullName', e.target.value)}
                         placeholder="e.g. Rahul Sharma"
                         className={`w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50/80 border text-slate-900 text-sm placeholder-slate-400 transition-all focus:outline-none focus:bg-white ${
@@ -230,7 +230,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                       <input
                         type="tel"
                         id="modal-input-phone"
-                        value={customer.phoneNumber}
+                        value={customer.phoneNumber ?? ''}
                         onChange={(e) => onChange('phoneNumber', e.target.value)}
                         placeholder="e.g. +91 98765 43210"
                         className={`w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50/80 border text-slate-900 text-sm placeholder-slate-400 transition-all focus:outline-none focus:bg-white ${
@@ -265,7 +265,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     <input
                       type="text"
                       id="modal-input-custom-name"
-                      value={customer.customNameToPrint}
+                      value={customer.customNameToPrint ?? ''}
                       onChange={(e) => onChange('customNameToPrint', e.target.value)}
                       placeholder="e.g. Rahul Sharma, Dr. Aman Gupta, or Company Name"
                       className="w-full px-3.5 py-2.5 rounded-xl bg-emerald-50/40 border border-emerald-300 text-slate-900 text-sm placeholder-slate-400 transition-all focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 font-medium"
@@ -291,7 +291,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     <input
                       type="text"
                       id="modal-input-company"
-                      value={customer.companyName}
+                      value={customer.companyName ?? ''}
                       onChange={(e) => onChange('companyName', e.target.value)}
                       placeholder="e.g. Acme Corp / Brand Name"
                       className="w-full pl-9 pr-3 py-2.5 rounded-xl bg-slate-50/80 border border-slate-200 text-slate-900 text-sm placeholder-slate-400 transition-all focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20"
@@ -314,7 +314,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                     <textarea
                       id="modal-input-notes"
                       rows={2}
-                      value={customer.additionalNotes}
+                      value={customer.additionalNotes ?? ''}
                       onChange={(e) => onChange('additionalNotes', e.target.value)}
                       placeholder="e.g. Logo embossing, specific colors, required delivery date..."
                       className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-50/80 border border-slate-200 text-slate-900 text-sm placeholder-slate-400 transition-all focus:outline-none focus:bg-white focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 resize-y"

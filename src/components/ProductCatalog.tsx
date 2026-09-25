@@ -54,7 +54,7 @@ export const ProductCatalog: React.FC<ProductCatalogProps> = ({
           <input
             type="text"
             id="product-search-input"
-            value={searchQuery}
+            value={searchQuery ?? ''}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search bottles, pens, t-shirts, caps, diaries, keychains..."
             className="w-full pl-10 pr-10 py-3 rounded-2xl bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm shadow-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 transition-all"

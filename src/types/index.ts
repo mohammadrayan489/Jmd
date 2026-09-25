@@ -3,6 +3,7 @@ export interface CatalogProduct {
   name: string;
   description: string;
   image: string;
+  imageUrl?: string;
   category: string;
   price: number | null;
   priceType: 'on_request' | 'fixed';

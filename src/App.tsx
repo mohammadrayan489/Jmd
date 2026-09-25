@@ -20,15 +20,7 @@ export default function App() {
 
   // Customer details state (remembered in localStorage)
   const [customer, setCustomer] = useState<CustomerDetailsType>(() => {
-    try {
-      const saved = localStorage.getItem('jmd_customer_details');
-      if (saved) {
-        return JSON.parse(saved);
-      }
-    } catch {
-      // Ignore localStorage errors
-    }
-    return {
+    const defaultCustomer: CustomerDetailsType = {
       fullName: '',
       phoneNumber: '',
       companyName: '',
@@ -36,6 +28,25 @@ export default function App() {
       customNameToPrint: '',
       additionalNotes: ''
     };
+    try {
+      const saved = localStorage.getItem('jmd_customer_details');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return {
+            fullName: typeof parsed.fullName === 'string' ? parsed.fullName : '',
+            phoneNumber: typeof parsed.phoneNumber === 'string' ? parsed.phoneNumber : '',
+            companyName: typeof parsed.companyName === 'string' ? parsed.companyName : '',
+            location: typeof parsed.location === 'string' ? parsed.location : '',
+            customNameToPrint: typeof parsed.customNameToPrint === 'string' ? parsed.customNameToPrint : '',
+            additionalNotes: typeof parsed.additionalNotes === 'string' ? parsed.additionalNotes : ''
+          };
+        }
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+    return defaultCustomer;
   });
 
   // Sync customer details to localStorage
@@ -95,30 +106,40 @@ export default function App() {
     const isValid = validateOrder();
     if (!isValid) return;
 
-    // Format the WhatsApp message with exact product, quantity, location and details
+    // Public product image URL from image or imageUrl field
+    const productImageUrl = (selectedProduct.imageUrl || selectedProduct.image || '').trim();
+    const productImageLine = productImageUrl ? `\nProduct Image: ${productImageUrl}` : '';
+
+    const noteParts: string[] = [];
+    if (customer.customNameToPrint?.trim()) {
+      noteParts.push(`Custom Name to Print: ${customer.customNameToPrint.trim()}`);
+    }
+    if (customer.companyName?.trim()) {
+      noteParts.push(`Company: ${customer.companyName.trim()}`);
+    }
+    if (customer.additionalNotes?.trim()) {
+      noteParts.push(customer.additionalNotes.trim());
+    }
+
+    const notesValue = noteParts.length > 0
+      ? noteParts.join(' | ')
+      : 'Please share the pricing.';
+
+    // Format the WhatsApp message with product image URL and details
     const message = `Hello JMD Enterprises,
 
-I would like to place an order.
+I would like to enquire about the following products:
 
-Product Details:
-• Product: ${selectedProduct.name}
-• Category: ${selectedProduct.category}
-• Quantity Needed: ${selectedQuantity}
+Product: ${selectedProduct.name}
+Quantity: ${selectedQuantity}${productImageLine}
 
-Customization / Branding:
-• Name/Text to Print/Engrave: ${customer.customNameToPrint.trim() || 'To be provided / N/A'}
-• Company / Brand Name: ${customer.companyName.trim() || 'N/A'}
+Customer Details:
+Name: ${customer.fullName.trim()}
+Phone: ${customer.phoneNumber.trim()}
+Location: ${customer.location.trim()}
+Notes: ${notesValue}
 
-Customer & Delivery Details:
-• Delivery Location: ${customer.location.trim()}
-• Customer Name: ${customer.fullName.trim()}
-• WhatsApp Phone: ${customer.phoneNumber.trim()}
-
-Additional Notes:
-${customer.additionalNotes.trim() || 'None'}
-
-Please share the pricing and delivery details.
-Thank you!`;
+Please share pricing and availability.`;
 
     const encodedText = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${BUSINESS_INFO.cleanPhone}?text=${encodedText}`;
